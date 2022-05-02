@@ -9,10 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arkivanov.decompose.ExperimentalDecomposeApi
-import com.arkivanov.decompose.extensions.compose.jetpack.ChildAnimation
 import com.arkivanov.decompose.extensions.compose.jetpack.Children
-import com.arkivanov.decompose.extensions.compose.jetpack.animation.child.crossfade
-import com.arkivanov.decompose.extensions.compose.jetpack.animation.child.slide
 import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.arkivanov.decompose.router.RouterState
 import com.arkivanov.decompose.value.MutableValue

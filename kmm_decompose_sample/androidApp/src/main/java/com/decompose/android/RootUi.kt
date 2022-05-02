@@ -4,7 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetpack.Children
-import com.arkivanov.decompose.extensions.compose.jetpack.animation.child.crossfade
+import com.arkivanov.decompose.extensions.compose.jetpack.animation.child.childAnimation
+import com.arkivanov.decompose.extensions.compose.jetpack.animation.child.fade
 import com.decompose.components.root.Root
 
 @ExperimentalDecomposeApi
@@ -15,7 +16,7 @@ fun RootUi(
 ) {
     Children(
         routerState = component.routerState,
-        animation = crossfade()
+        animation = childAnimation(fade())
     ) {
         when (val child = it.instance) {
             is Root.Child.Main ->

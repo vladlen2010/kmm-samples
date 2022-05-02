@@ -22,7 +22,7 @@ kotlin {
         framework {
             baseName = "shared"
             transitiveExport = true
-            export("com.arkivanov.decompose:decompose:0.4.0")
+            export("com.arkivanov.decompose:decompose:0.6.0")
         }
     }
     
@@ -30,7 +30,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 //Decompose
-                implementation("com.arkivanov.decompose:decompose:0.4.0")
+                implementation("com.arkivanov.decompose:decompose:0.6.0")
             }
         }
         val commonTest by getting {
@@ -51,7 +51,7 @@ kotlin {
         //val iosSimulatorArm64Main by getting
         val iosMain by creating {
             dependencies {
-                api("com.arkivanov.decompose:decompose:0.4.0")
+                api("com.arkivanov.decompose:decompose:0.6.0")
             }
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
@@ -76,4 +76,5 @@ android {
         minSdk = 21
         targetSdk = 31
     }
+    namespace = "com.decompose"
 }
