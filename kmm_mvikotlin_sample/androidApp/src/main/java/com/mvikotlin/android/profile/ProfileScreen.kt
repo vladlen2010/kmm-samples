@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
@@ -53,7 +54,10 @@ fun ProfileScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp)
+                        .padding(
+                            start = it.calculateStartPadding(LayoutDirection.Rtl) + 16.dp,
+                            end = it.calculateEndPadding(LayoutDirection.Rtl) + 16.dp
+                        )
                 ) {
 
                     Row(

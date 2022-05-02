@@ -23,8 +23,8 @@ kotlin {
         framework {
             baseName = "shared"
             transitiveExport = true
-            export("com.arkivanov.decompose:decompose:0.4.0")
-            export("com.arkivanov.mvikotlin:mvikotlin-main:3.0.0-alpha03")
+            export("com.arkivanov.decompose:decompose:0.6.0")
+            export("com.arkivanov.mvikotlin:mvikotlin-main:3.0.0-beta02")
         }
     }
 
@@ -32,11 +32,11 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 //Decompose
-                implementation("com.arkivanov.decompose:decompose:0.4.0")
+                implementation("com.arkivanov.decompose:decompose:0.6.0")
                 //MVIKotlin
-                implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.0-alpha03")
-                implementation("com.arkivanov.mvikotlin:mvikotlin-extensions-reaktive:3.0.0-alpha03")
-                implementation("com.arkivanov.mvikotlin:rx:3.0.0-alpha03")
+                implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.0-beta02")
+                implementation("com.arkivanov.mvikotlin:mvikotlin-extensions-reaktive:3.0.0-beta02")
+                implementation("com.arkivanov.mvikotlin:rx:3.0.0-beta02")
                 //Kotlinx serialization
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
                 //Reactive
@@ -68,8 +68,8 @@ kotlin {
         val iosMain by creating {
             dependencies {
                 implementation("io.ktor:ktor-client-ios:1.6.7")
-                api("com.arkivanov.decompose:decompose:0.4.0")
-                api("com.arkivanov.mvikotlin:mvikotlin-main:3.0.0-alpha03")
+                api("com.arkivanov.decompose:decompose:0.6.0")
+                api("com.arkivanov.mvikotlin:mvikotlin-main:3.0.0-beta02")
             }
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
@@ -95,4 +95,5 @@ android {
         minSdk = 21
         targetSdk = 32
     }
+    namespace = "com.mvikotlin"
 }

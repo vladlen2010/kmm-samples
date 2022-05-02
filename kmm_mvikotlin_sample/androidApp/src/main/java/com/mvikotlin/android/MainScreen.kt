@@ -10,7 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetpack.Children
+import com.arkivanov.decompose.extensions.compose.jetpack.animation.child.childAnimation
+import com.arkivanov.decompose.extensions.compose.jetpack.animation.child.fade
 import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.arkivanov.decompose.router.RouterState
 import com.arkivanov.decompose.value.MutableValue
@@ -48,12 +51,16 @@ fun MainScreen(
 }
 
 
+@OptIn(ExperimentalDecomposeApi::class)
 @Composable
 fun TabContent(
     component: MainComponent,
     modifier: Modifier = Modifier,
 ) {
-    Children(routerState = component.routerState) {
+    Children(
+        routerState = component.routerState,
+        animation = childAnimation(fade())
+    ) {
         when (val child = it.instance) {
             is Child.PostRoot ->
                 PostRootScreen(
