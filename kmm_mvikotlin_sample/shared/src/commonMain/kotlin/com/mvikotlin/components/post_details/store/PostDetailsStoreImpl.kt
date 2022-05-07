@@ -5,23 +5,22 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.reaktive.ReaktiveExecutor
-import com.badoo.reaktive.scheduler.Scheduler
-import com.badoo.reaktive.scheduler.computationScheduler
 import com.badoo.reaktive.scheduler.ioScheduler
 import com.badoo.reaktive.scheduler.mainScheduler
-import com.badoo.reaktive.single.delay
-import com.badoo.reaktive.single.doOnAfterTerminate
-import com.badoo.reaktive.single.singleFromFunction
+import com.badoo.reaktive.single.map
+import com.badoo.reaktive.single.observeOn
+import com.badoo.reaktive.single.subscribeOn
 import com.mvikotlin.components.post_details.PostDetailsItem
+import com.mvikotlin.components.post_details.integration.toDomain
 import com.mvikotlin.components.post_details.store.PostDetailsStore.Intent
-import com.mvikotlin.components.post_details.store.PostDetailsStore.State
 import com.mvikotlin.components.post_details.store.PostDetailsStore.Label
+import com.mvikotlin.components.post_details.store.PostDetailsStore.State
 import com.mvikotlin.repository.PostRepository
 
 internal class PostDetailsStoreImpl(
     private val postId: Long,
     private val storeFactory: StoreFactory,
-    private val postRepository: PostRepository,
+    private val postRepository: PostRepository
 ) {
 
     fun create(): PostDetailsStore =
@@ -41,38 +40,27 @@ internal class PostDetailsStoreImpl(
 
     private inner class ExecutorImpl : ReaktiveExecutor<Intent, Unit, State, Message, Label>() {
         override fun executeAction(action: Unit, getState: () -> State) {
-//            postsRepository.load
-            dispatch(
-                Message.ItemLoaded(
-                    post = PostDetailsItem(
-                        title = "top $postId",
-                        body = "kek"
-                    )
+            loadPost()
+        }
+
+        private fun loadPost() {
+            postRepository.getPostById(postId)
+                .map { it.toDomain() }
+                .subscribeOn(ioScheduler)
+                .observeOn(mainScheduler)
+                .subscribeScoped(
+                    isThreadLocal = true,
+                    onSuccess = {  dispatch(Message.ItemLoaded(it)) }
                 )
-            )
         }
 
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
-                is Intent.Reload -> reload()
-            }
-        }
-
-        private fun reload() {
-            singleFromFunction {
-                dispatch(Message.Loading)
-            }
-                .delay(1000, mainScheduler)
-                .subscribeScoped(isThreadLocal = true) {
-                    dispatch(
-                        Message.ItemLoaded(
-                            post = PostDetailsItem(
-                                title = "reload top $postId",
-                                body = "reload kek"
-                            )
-                        )
-                    )
+                is Intent.Reload -> {
+                    dispatch(Message.Loading)
+                    loadPost()
                 }
+            }
         }
     }
 

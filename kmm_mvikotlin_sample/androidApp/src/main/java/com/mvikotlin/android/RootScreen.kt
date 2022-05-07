@@ -10,7 +10,7 @@ import com.mvikotlin.android.profile.edit.EditProfileScreen
 import com.mvikotlin.components.root.RootComponent
 import com.mvikotlin.components.root.RootComponent.Child
 
-@OptIn(ExperimentalDecomposeApi::class)
+@ExperimentalDecomposeApi
 @Composable
 fun RootScreen(
     component: RootComponent,

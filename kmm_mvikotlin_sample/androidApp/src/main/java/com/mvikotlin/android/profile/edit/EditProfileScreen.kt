@@ -26,7 +26,7 @@ fun EditProfileScreen(
         },
         modifier = modifier
     ) {
-
+        //TODO: add edit profile screen
     }
 }
 

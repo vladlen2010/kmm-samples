@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetpack.Children
 import com.arkivanov.decompose.router.RouterState
 import com.arkivanov.decompose.value.MutableValue
@@ -13,6 +14,7 @@ import com.mvikotlin.android.post.list.PostListPreview
 import com.mvikotlin.android.post.list.PostListScreen
 import com.mvikotlin.components.post_root.PostRootComponent
 
+@ExperimentalDecomposeApi
 @Composable
 fun PostRootScreen(
     component: PostRootComponent,

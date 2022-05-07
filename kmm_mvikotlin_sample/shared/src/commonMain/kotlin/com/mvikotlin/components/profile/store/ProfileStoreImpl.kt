@@ -1,11 +1,17 @@
 package com.mvikotlin.components.profile.store
 
-import com.arkivanov.mvikotlin.core.store.*
+import com.arkivanov.mvikotlin.core.store.Reducer
+import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
+import com.arkivanov.mvikotlin.core.store.Store
+import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.reaktive.ReaktiveExecutor
+import com.badoo.reaktive.scheduler.ioScheduler
 import com.badoo.reaktive.scheduler.mainScheduler
-import com.badoo.reaktive.single.delay
-import com.badoo.reaktive.single.singleFromFunction
+import com.badoo.reaktive.single.map
+import com.badoo.reaktive.single.observeOn
+import com.badoo.reaktive.single.subscribeOn
 import com.mvikotlin.components.profile.ProfileItem
+import com.mvikotlin.components.profile.integration.toDomain
 import com.mvikotlin.components.profile.store.ProfileStore.Intent
 import com.mvikotlin.components.profile.store.ProfileStore.Intent.Reload
 import com.mvikotlin.components.profile.store.ProfileStore.Label
@@ -15,7 +21,7 @@ import com.mvikotlin.repository.ProfileRepository
 internal class ProfileStoreImpl(
     private val userId: Long,
     private val storeFactory: StoreFactory,
-    private val profileRepository: ProfileRepository,
+    private val profileRepository: ProfileRepository
 ) {
 
     fun create(): ProfileStore =
@@ -35,15 +41,7 @@ internal class ProfileStoreImpl(
 
     private inner class ExecutorImpl : ReaktiveExecutor<Intent, Unit, State, Message, Label>() {
         override fun executeAction(action: Unit, getState: () -> State) {
-            dispatch(
-                Message.ItemLoaded(
-                    ProfileItem(
-                        userId = userId,
-                        name = "Vladlen",
-                        username = "Vladlen2010"
-                    )
-                )
-            )
+            loadUser()
         }
 
         override fun executeIntent(intent: Intent, getState: () -> State) {
@@ -53,22 +51,14 @@ internal class ProfileStoreImpl(
         }
 
         private fun loadUser() {
-//            profileRepository.loadUser(userId) //TODO:
-            singleFromFunction {
-                dispatch(Message.Loading)
-            }
-                .delay(1000, mainScheduler)
-                .subscribeScoped(isThreadLocal = true) {
-                    dispatch(
-                        Message.ItemLoaded(
-                            ProfileItem(
-                                userId = userId,
-                                name = "Vladlen",
-                                username = "Vladlen2010"
-                            )
-                        )
-                    )
-                }
+            profileRepository.getProfile(userId)
+                .map { it.toDomain() }
+                .subscribeOn(ioScheduler)
+                .observeOn(mainScheduler)
+                .subscribeScoped(
+                    isThreadLocal = true,
+                    onSuccess = { dispatch(Message.ItemLoaded(it)) }
+                )
         }
     }
 

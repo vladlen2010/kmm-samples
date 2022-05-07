@@ -2,7 +2,11 @@ package com.mvikotlin.android
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -22,9 +26,9 @@ import com.mvikotlin.android.post.PostRootPreview
 import com.mvikotlin.android.post.PostRootScreen
 import com.mvikotlin.android.profile.ProfileScreen
 import com.mvikotlin.components.main.MainComponent
-import com.mvikotlin.components.main.MainComponent.Tab
 import com.mvikotlin.components.main.MainComponent.Child
 import com.mvikotlin.components.main.MainComponent.Model
+import com.mvikotlin.components.main.MainComponent.Tab
 
 @Composable
 fun MainScreen(
@@ -51,7 +55,7 @@ fun MainScreen(
 }
 
 
-@OptIn(ExperimentalDecomposeApi::class)
+@ExperimentalDecomposeApi
 @Composable
 fun TabContent(
     component: MainComponent,

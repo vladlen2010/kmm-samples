@@ -1,8 +1,8 @@
 package com.mvikotlin.android
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -15,6 +15,7 @@ import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.mvikotlin.Greeting
 import com.mvikotlin.components.root.RootComponent
 import com.mvikotlin.components.root.integration.RootComponentImpl
+import com.mvikotlin.repository.JsonPlaceholderApi
 import com.mvikotlin.repository.PostRepository
 import com.mvikotlin.repository.ProfileRepository
 
@@ -46,7 +47,7 @@ class MainActivity : AppCompatActivity() {
             userId = 1,
             componentContext = componentContext,
             storeFactory = LoggingStoreFactory(DefaultStoreFactory()),
-            postRepository = PostRepository(),
-            profileRepository = ProfileRepository()
+            postRepository = PostRepository(JsonPlaceholderApi),
+            profileRepository = ProfileRepository(JsonPlaceholderApi)
         )
 }

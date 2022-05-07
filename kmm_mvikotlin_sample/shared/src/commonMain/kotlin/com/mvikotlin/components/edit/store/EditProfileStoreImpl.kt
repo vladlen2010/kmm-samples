@@ -5,8 +5,16 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.reaktive.ReaktiveExecutor
+import com.badoo.reaktive.scheduler.ioScheduler
+import com.badoo.reaktive.scheduler.mainScheduler
+import com.badoo.reaktive.single.map
+import com.badoo.reaktive.single.observeOn
+import com.badoo.reaktive.single.subscribeOn
 import com.mvikotlin.components.edit.EditProfileItem
-import com.mvikotlin.components.edit.store.EditProfileStore.*
+import com.mvikotlin.components.edit.integration.toDomain
+import com.mvikotlin.components.edit.store.EditProfileStore.Intent
+import com.mvikotlin.components.edit.store.EditProfileStore.Label
+import com.mvikotlin.components.edit.store.EditProfileStore.State
 import com.mvikotlin.repository.ProfileRepository
 
 internal class EditProfileStoreImpl(
@@ -32,8 +40,14 @@ internal class EditProfileStoreImpl(
     private inner class ExecutorImpl : ReaktiveExecutor<Intent, Unit, State, Message, Label>() {
 
         override fun executeAction(action: Unit, getState: () -> State) {
-//            profileRepository.load(userId: )
-
+            profileRepository.getProfile(userId)
+                .map { it.toDomain() }
+                .subscribeOn(ioScheduler)
+                .observeOn(mainScheduler)
+                .subscribeScoped(
+                    isThreadLocal = true,
+                    onSuccess = { dispatch(Message.ProfileLoaded(it)) }
+                )
         }
 
         override fun executeIntent(intent: Intent, getState: () -> State) {

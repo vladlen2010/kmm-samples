@@ -1,18 +1,26 @@
 package com.mvikotlin.components.post_list.store
 
-import com.arkivanov.mvikotlin.core.store.*
+import com.arkivanov.mvikotlin.core.store.Reducer
+import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
+import com.arkivanov.mvikotlin.core.store.Store
+import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.reaktive.ReaktiveExecutor
+import com.badoo.reaktive.scheduler.ioScheduler
 import com.badoo.reaktive.scheduler.mainScheduler
-import com.badoo.reaktive.single.delay
-import com.badoo.reaktive.single.doOnAfterTerminate
-import com.badoo.reaktive.single.singleFromFunction
+import com.badoo.reaktive.single.map
+import com.badoo.reaktive.single.observeOn
+import com.badoo.reaktive.single.subscribe
+import com.badoo.reaktive.single.subscribeOn
 import com.mvikotlin.components.post_list.PostListItem
-import com.mvikotlin.components.post_list.store.PostListStore.*
+import com.mvikotlin.components.post_list.integration.toDomain
+import com.mvikotlin.components.post_list.store.PostListStore.Intent
+import com.mvikotlin.components.post_list.store.PostListStore.Label
+import com.mvikotlin.components.post_list.store.PostListStore.State
 import com.mvikotlin.repository.PostRepository
 
 internal class PostListStoreImpl(
     private val storeFactory: StoreFactory,
-    private val postRepository: PostRepository,
+    private val postRepository: PostRepository
 ) {
 
     fun create(): PostListStore =
@@ -32,16 +40,18 @@ internal class PostListStoreImpl(
 
     private inner class ExecutionImpl : ReaktiveExecutor<Intent, Unit, State, Message, Label>() {
         override fun executeAction(action: Unit, getState: () -> State) {
-            dispatch(
-                Message.Loaded(
-                    posts = List(100) {
-                        PostListItem(
-                            id = it.toLong(),
-                            title = "Post $it"
-                        )
-                    }
+            loadPosts(forceUpdate = true)
+        }
+
+        private fun loadPosts(forceUpdate: Boolean) {
+            postRepository.getPosts(forceUpdate)
+                .map { posts -> posts.map { it.toDomain() } }
+                .subscribeOn(ioScheduler)
+                .observeOn(mainScheduler)
+                .subscribe(
+                    isThreadLocal = true,
+                    onSuccess = { dispatch(Message.Loaded(it)) }
                 )
-            )
         }
 
         override fun executeIntent(intent: Intent, getState: () -> State) {
@@ -51,25 +61,8 @@ internal class PostListStoreImpl(
         }
 
         private fun refresh(keepContent: Boolean) {
-            singleFromFunction {
-                dispatch(Message.Loading(keepContent))
-            }
-                .delay(1000, mainScheduler)
-                .doOnAfterTerminate {
-                    dispatch(
-                        Message.Loaded(
-                            posts = List(100) {
-                                PostListItem(
-                                    id = it.toLong(),
-                                    title = "Refreshed Post $it"
-                                )
-                            }
-                        )
-                    )
-                }
-                .subscribeScoped(isThreadLocal = true, {
-                    print("success")
-                })
+            dispatch(Message.Loading(keepContent))
+            loadPosts(forceUpdate = keepContent)
         }
     }
 

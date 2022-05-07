@@ -1,7 +1,9 @@
 package com.mvikotlin.components.profile.integration
 
 import com.mvikotlin.components.profile.ProfileComponent.Model
+import com.mvikotlin.components.profile.ProfileItem
 import com.mvikotlin.components.profile.store.ProfileStore.State
+import com.mvikotlin.response.User
 
 
 internal val stateToModel: (State) -> Model =
@@ -15,3 +17,11 @@ internal val stateToModel: (State) -> Model =
             State.Loading -> Model.Loading
         }
     }
+
+internal fun User.toDomain() :ProfileItem {
+    return ProfileItem(
+        userId = id,
+        name = name,
+        username = username
+    )
+}

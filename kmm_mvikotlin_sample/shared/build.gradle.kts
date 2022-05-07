@@ -41,8 +41,12 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
                 //Reactive
                 implementation( "com.badoo.reaktive:reaktive:1.2.1")
+                implementation( "com.badoo.reaktive:coroutines-interop:1.2.1")
+
                 //Ktor
-                implementation("io.ktor:ktor-client-core:1.6.7")
+                implementation("io.ktor:ktor-client-core:2.0.1")
+                implementation("io.ktor:ktor-client-content-negotiation:2.0.1")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.1")
             }
         }
         val commonTest by getting {
@@ -53,7 +57,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-android:1.6.7")
+                implementation("io.ktor:ktor-client-android:2.0.1")
             }
         }
         val androidTest by getting {
@@ -67,7 +71,7 @@ kotlin {
         //val iosSimulatorArm64Main by getting
         val iosMain by creating {
             dependencies {
-                implementation("io.ktor:ktor-client-ios:1.6.7")
+                implementation("io.ktor:ktor-client-darwin:2.0.1")
                 api("com.arkivanov.decompose:decompose:0.6.0")
                 api("com.arkivanov.mvikotlin:mvikotlin-main:3.0.0-beta02")
             }
