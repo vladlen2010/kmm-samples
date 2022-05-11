@@ -44,10 +44,7 @@ internal class EditProfileStoreImpl(
                 .map { it.toDomain() }
                 .subscribeOn(ioScheduler)
                 .observeOn(mainScheduler)
-                .subscribeScoped(
-                    isThreadLocal = true,
-                    onSuccess = { dispatch(Message.ProfileLoaded(it)) }
-                )
+                .subscribeScoped{ dispatch(Message.ProfileLoaded(it)) }
         }
 
         override fun executeIntent(intent: Intent, getState: () -> State) {

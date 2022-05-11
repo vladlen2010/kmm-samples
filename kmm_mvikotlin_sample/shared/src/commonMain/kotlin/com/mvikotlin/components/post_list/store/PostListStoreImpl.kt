@@ -48,10 +48,7 @@ internal class PostListStoreImpl(
                 .map { posts -> posts.map { it.toDomain() } }
                 .subscribeOn(ioScheduler)
                 .observeOn(mainScheduler)
-                .subscribe(
-                    isThreadLocal = true,
-                    onSuccess = { dispatch(Message.Loaded(it)) }
-                )
+                .subscribe{ dispatch(Message.Loaded(it)) }
         }
 
         override fun executeIntent(intent: Intent, getState: () -> State) {

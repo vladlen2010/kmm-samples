@@ -55,10 +55,7 @@ internal class ProfileStoreImpl(
                 .map { it.toDomain() }
                 .subscribeOn(ioScheduler)
                 .observeOn(mainScheduler)
-                .subscribeScoped(
-                    isThreadLocal = true,
-                    onSuccess = { dispatch(Message.ItemLoaded(it)) }
-                )
+                .subscribeScoped{ dispatch(Message.ItemLoaded(it)) }
         }
     }
 
